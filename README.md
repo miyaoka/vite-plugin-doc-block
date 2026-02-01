@@ -61,6 +61,25 @@ The `<doc>` block will be removed during build.
 - **Zero runtime cost**: Stripped at build time
 - **IDE friendly**: Documentation is visible when editing the component
 
+## Why not a simpler approach?
+
+A common approach to ignore custom blocks is to return an empty module:
+
+```ts
+// This does NOT work with vite-plugin-vue-inspector
+const vueDocsPlugin = {
+  name: 'vue-docs',
+  transform(_code, id) {
+    if (!/vue&type=doc/.test(id)) return
+    return `export default ''`
+  },
+}
+```
+
+However, this doesn't solve the `vite-plugin-vue-inspector` issue. The inspector parses the SFC before this transform runs, and HTML-like strings inside `<doc>` blocks (e.g. `<RouterView>`) cause parsing errors.
+
+This plugin uses `enforce: 'pre'` to run before the inspector and removes the content from the SFC source directly, preventing the error.
+
 ## License
 
 MIT
