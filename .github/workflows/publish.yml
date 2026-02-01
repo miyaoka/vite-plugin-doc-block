@@ -13,14 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: jdx/mise-action@v2
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - uses: actions/setup-node@v4
         with:
           registry-url: https://registry.npmjs.org
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm build
