@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "es2022",
+    "lib": ["esnext"],
+    "module": "esnext",
     "moduleResolution": "bundler",
+    "types": ["vitest/config"],
     "strict": true,
+    "strictNullChecks": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "rootDir": "src",
-    "outDir": "dist"
-  },
-  "include": ["src"]
+    "skipLibCheck": true
+  }
 }

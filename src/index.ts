@@ -1,5 +1,5 @@
-import type { Plugin } from "vite";
-import { parse } from "vue/compiler-sfc";
+import type { Plugin } from 'vite'
+import { parse } from 'vue/compiler-sfc'
 
 /**
  * Vite plugin to strip <doc> custom blocks from Vue SFC.
@@ -22,37 +22,37 @@ import { parse } from "vue/compiler-sfc";
  */
 export function docBlockPlugin(): Plugin {
   return {
-    name: "vite-plugin-doc-block",
-    enforce: "pre",
+    name: 'vite-plugin-doc-block',
+    enforce: 'pre',
     transform(code: string, id: string) {
-      if (!id.endsWith(".vue")) {
-        return;
+      if (!id.endsWith('.vue')) {
+        return
       }
 
-      const { descriptor } = parse(code, { filename: id });
+      const { descriptor } = parse(code, { filename: id })
 
       const docBlocks = descriptor.customBlocks.filter(
-        (block) => block.type === "doc"
-      );
+        block => block.type === 'doc',
+      )
 
       if (docBlocks.length === 0) {
-        return;
+        return
       }
 
-      let result = code;
+      let result = code
 
       for (const block of docBlocks) {
         const blockContent = code.slice(
           block.loc.start.offset,
-          block.loc.end.offset
-        );
-        result = result.replace(blockContent, "");
+          block.loc.end.offset,
+        )
+        result = result.replace(blockContent, '')
       }
 
       return {
         code: result,
         map: null,
-      };
+      }
     },
-  };
+  }
 }

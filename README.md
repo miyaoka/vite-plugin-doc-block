@@ -14,13 +14,13 @@ pnpm add -D vite-plugin-doc-block
 
 ```ts
 // vite.config.ts
-import vue from "@vitejs/plugin-vue";
-import { docBlockPlugin } from "vite-plugin-doc-block";
-import { defineConfig } from "vite";
+import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
+import { docBlockPlugin } from 'vite-plugin-doc-block'
 
 export default defineConfig({
   plugins: [docBlockPlugin(), vue()],
-});
+})
 ```
 
 > **Note**: Place `docBlockPlugin()` before other Vue-related plugins.
@@ -45,7 +45,7 @@ Used in the user profile page.
 </doc>
 
 <script setup lang="ts">
-const props = defineProps<{ userId: string }>();
+const props = defineProps<{ userId: string }>()
 </script>
 
 <template>
