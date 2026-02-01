@@ -1,5 +1,9 @@
 # vite-plugin-doc-block
 
+[![npm version](https://img.shields.io/npm/v/vite-plugin-doc-block)](https://www.npmjs.com/package/vite-plugin-doc-block)
+[![npm downloads](https://img.shields.io/npm/dm/vite-plugin-doc-block)](https://www.npmjs.com/package/vite-plugin-doc-block)
+[![license](https://img.shields.io/npm/l/vite-plugin-doc-block)](https://github.com/miyaoka/vite-plugin-doc-block/blob/main/LICENSE)
+
 Vite plugin to strip `<doc>` custom blocks from Vue SFC.
 
 Write documentation directly in your Vue components. The plugin removes them during build, so they don't affect bundle size.
