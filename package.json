@@ -1,0 +1,55 @@
+{
+  "name": "vite-plugin-doc-block",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Vite plugin to strip <doc> custom blocks from Vue SFC",
+  "author": "miyaoka",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miyaoka/vite-plugin-doc-block.git"
+  },
+  "bugs": "https://github.com/miyaoka/vite-plugin-doc-block/issues",
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "vue",
+    "sfc",
+    "doc",
+    "documentation"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0 || ^6.0.0 || ^7.0.0"
+  },
+  "dependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "tsdown": "^0.20.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0"
+  }
+}
