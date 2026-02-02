@@ -1,8 +1,8 @@
-# vite-plugin-doc-block
+# @miyaoka/vite-plugin-doc-block
 
-[![npm version](https://img.shields.io/npm/v/vite-plugin-doc-block)](https://www.npmjs.com/package/vite-plugin-doc-block)
-[![npm downloads](https://img.shields.io/npm/dm/vite-plugin-doc-block)](https://www.npmjs.com/package/vite-plugin-doc-block)
-[![license](https://img.shields.io/npm/l/vite-plugin-doc-block)](https://github.com/miyaoka/vite-plugin-doc-block/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@miyaoka/vite-plugin-doc-block)](https://www.npmjs.com/package/@miyaoka/vite-plugin-doc-block)
+[![npm downloads](https://img.shields.io/npm/dm/@miyaoka/vite-plugin-doc-block)](https://www.npmjs.com/package/@miyaoka/vite-plugin-doc-block)
+[![license](https://img.shields.io/npm/l/@miyaoka/vite-plugin-doc-block)](https://github.com/miyaoka/vite-plugin-doc-block/blob/main/LICENSE)
 
 Vite plugin to strip `<doc>` custom blocks from Vue SFC.
 
@@ -11,7 +11,7 @@ Write documentation directly in your Vue components. The plugin removes them dur
 ## Install
 
 ```bash
-pnpm add -D vite-plugin-doc-block
+pnpm add -D @miyaoka/vite-plugin-doc-block
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ pnpm add -D vite-plugin-doc-block
 // vite.config.ts
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import { docBlockPlugin } from 'vite-plugin-doc-block'
+import { docBlockPlugin } from '@miyaoka/vite-plugin-doc-block'
 
 export default defineConfig({
   plugins: [docBlockPlugin(), vue()],
