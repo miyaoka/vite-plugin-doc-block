@@ -18,9 +18,9 @@ pnpm add -D @miyaoka/vite-plugin-doc-block
 
 ```ts
 // vite.config.ts
+import { docBlockPlugin } from '@miyaoka/vite-plugin-doc-block'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import { docBlockPlugin } from '@miyaoka/vite-plugin-doc-block'
 
 export default defineConfig({
   plugins: [docBlockPlugin(), vue()],
