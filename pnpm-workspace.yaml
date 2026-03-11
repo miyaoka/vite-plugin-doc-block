@@ -4,5 +4,6 @@ shellEmulator: true
 
 trustPolicy: no-downgrade
 
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
+  lefthook: true
