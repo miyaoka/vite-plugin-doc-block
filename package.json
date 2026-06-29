@@ -54,7 +54,7 @@
     "@antfu/eslint-config": "9.1.0",
     "@typescript/native-preview": "7.0.0-dev.20260626.1",
     "bumpp": "11.1.0",
-    "eslint": "10.5.0",
+    "eslint": "10.6.0",
     "eslint-plugin-format": "2.0.1",
     "lefthook": "2.1.9",
     "tsdown": "0.22.3",
