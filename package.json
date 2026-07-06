@@ -1,7 +1,7 @@
 {
   "name": "@miyaoka/vite-plugin-doc-block",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Vite plugin to strip <doc> custom blocks from Vue SFC",
   "author": "miyaoka",
   "license": "MIT",
