@@ -85,6 +85,14 @@ However, this doesn't solve the `vite-plugin-vue-inspector` issue. The inspector
 
 This plugin uses `enforce: 'pre'` to run before the inspector and removes the content from the SFC source directly, preventing the error.
 
+## Dependency scan
+
+Vite's dependency scanner does not run the normal plugin pipeline — it reads `.vue` files from disk and extracts `<script>` blocks with a regex. A literal `<script>` string inside a doc block (even in a markdown code span) would be misdetected as an opening tag and break the scan, skipping dependency pre-bundling.
+
+To prevent this, the plugin also injects a scan-only plugin via `optimizeDeps.rolldownOptions.plugins`, which parses SFCs containing doc blocks with the real SFC parser and exposes each script block as its own module, mirroring Vite's built-in scan loader.
+
+> **Note**: This scan fix relies on Vite 8's rolldown-based scanner. On Vite 5–7 (esbuild-based scan) the option is ignored, so the scan issue remains there.
+
 ## License
 
 MIT
