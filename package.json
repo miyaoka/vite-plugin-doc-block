@@ -43,8 +43,7 @@
     "typecheck": "tsgo",
     "test": "vitest",
     "test:run": "vitest --run",
-    "prepublishOnly": "pnpm build",
-    "release": "bumpp"
+    "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
     "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0",
@@ -54,7 +53,6 @@
     "@antfu/eslint-config": "9.1.0",
     "@types/node": "24.13.2",
     "@typescript/native-preview": "7.0.0-dev.20260703.1",
-    "bumpp": "11.1.0",
     "eslint": "10.6.0",
     "eslint-plugin-format": "2.0.1",
     "lefthook": "2.1.9",
