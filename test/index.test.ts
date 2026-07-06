@@ -96,24 +96,54 @@ Use <RouterView> for routing.
 describe('docBlockScanPlugin (dep scan)', () => {
   const load = getScanLoadHandler()
 
-  it('returns script content for SFC with doc block containing literal <script>', async () => {
-    const result = await load(fixturePath('doc-with-script-literal.vue'))
+  it('exposes script content via a virtual block module, excluding doc content', async () => {
+    const id = fixturePath('doc-with-script-literal.vue')
+    const stub = await load(id)
 
     // doc block content (including the literal <script>) is excluded
-    expect(result?.code).not.toContain('never executed')
+    expect(stub?.code).not.toContain('never executed')
+    expect(stub?.code).toContain(`export * from`)
+    expect(stub?.code).toContain('export default {}')
+
+    const block = await load(`${id}?doc-block-scan.0.ts`)
+    expect(block?.moduleType).toBe('ts')
+    expect(block?.code).not.toContain('never executed')
     // script setup content is preserved
-    expect(result?.code).toContain(`import { ref } from 'vue'`)
-    expect(result?.moduleType).toBe('ts')
+    expect(block?.code).toContain(`import { ref } from 'vue'`)
     // guard against TS dropping unused imports: import paths are re-injected as side-effect imports
-    expect(result?.code).toContain(`import './Child.vue'`)
+    expect(block?.code).toContain(`import './Child.vue'`)
   })
 
-  it('does not duplicate export default for normal <script>', async () => {
-    const result = await load(fixturePath('doc-with-default-export.vue'))
+  it('keeps <script> and <script setup> in separate block modules', async () => {
+    const id = fixturePath('doc-with-both-scripts.vue')
+    const stub = await load(id)
 
-    const count = result?.code.match(/export default/g)?.length
+    // both blocks may declare identical bindings (Vue dedupes them when
+    // merging), so one concatenated module would be a duplicate-declaration
+    // error — each block must load as its own module
+    expect(stub?.code).toContain(`?doc-block-scan.0.ts`)
+    expect(stub?.code).toContain(`?doc-block-scan.1.ts`)
+
+    const script = await load(`${id}?doc-block-scan.0.ts`)
+    expect(script?.code).toContain(`import { computed } from 'vue'`)
+    expect(script?.code).toContain('export default')
+
+    const scriptSetup = await load(`${id}?doc-block-scan.1.ts`)
+    expect(scriptSetup?.code).toContain(`import { computed } from 'vue'`)
+    expect(scriptSetup?.code).toContain('computed(() => 1)')
+  })
+
+  it('keeps a component export default out of the stub module', async () => {
+    const id = fixturePath('doc-with-default-export.vue')
+    const stub = await load(id)
+
+    const count = stub?.code.match(/export default/g)?.length
     expect(count).toBe(1)
-    expect(result?.moduleType).toBe('js')
+    expect(stub?.moduleType).toBe('js')
+
+    const block = await load(`${id}?doc-block-scan.0.js`)
+    expect(block?.moduleType).toBe('js')
+    expect(block?.code).toContain('defineComponent')
   })
 
   it('returns undefined for SFC without doc block', async () => {

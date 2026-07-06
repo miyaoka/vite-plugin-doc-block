@@ -24,7 +24,7 @@ pnpm dev        # Build in watch mode
 - Parses SFC using `vue/compiler-sfc`'s `parse`
 - Finds blocks where `type === "doc"` in `customBlocks`
 - Removes matching blocks via string replacement
-- Injects a scan-only plugin into `optimizeDeps.rolldownOptions.plugins` via the `config` hook (#330). Vite's dependency scan bypasses the plugin pipeline and regex-extracts `<script>` from raw files, so a literal `<script>` inside a doc block breaks the scan. For SFCs with doc blocks, the scan plugin extracts scripts with the real SFC parser instead (Vite 8+ only)
+- Injects a scan-only plugin into `optimizeDeps.rolldownOptions.plugins` via the `config` hook (#330). Vite's dependency scan bypasses the plugin pipeline and regex-extracts `<script>` from raw files, so a literal `<script>` inside a doc block breaks the scan. For SFCs with doc blocks, the scan plugin parses them with the real SFC parser and exposes each script block as its own virtual module — same design as Vite's built-in scan loader (Vite 8+ only; esbuild-based Vite 5–7 ignores the option)
 
 ## Release
 

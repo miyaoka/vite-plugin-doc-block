@@ -30,6 +30,13 @@ function extractImportPaths(code: string): string {
   return js
 }
 
+// Virtual module id suffix for per-script-block modules. The id ends with a
+// JS extension (e.g. `Foo.vue?doc-block-scan.0.ts`) so that Vite's built-in
+// scan transform (`vite:dep-scan:transform:js-glob`, gated by JS_TYPES_RE)
+// still processes import.meta.glob inside the block contents.
+const scanBlockIdRE = /\?doc-block-scan\.\d+\.\w+$/
+const scanLoadFilterRE = /(?:\.vue|\?doc-block-scan\.\d+\.\w+)$/
+
 /**
  * Rolldown plugin used only during Vite's dependency scan.
  *
@@ -43,49 +50,80 @@ function extractImportPaths(code: string): string {
  * for SFCs containing doc blocks we extract scripts with the real SFC
  * parser instead. Without a doc block, return undefined to defer to
  * Vite's standard path.
+ *
+ * Each script block becomes its own virtual module (same design as Vite's
+ * built-in scan loader): <script> and <script setup> can legitimately
+ * declare the same bindings (compileScript dedupes imports when merging),
+ * so concatenating them into one module would raise duplicate-declaration
+ * errors and abort the whole scan.
  */
 function docBlockScanPlugin(): Rolldown.Plugin {
+  // Per-block contents keyed by virtual module id. Populated when the owning
+  // .vue file is loaded, which always happens before the block ids resolve
+  const blockContents = new Map<
+    string,
+    { code: string, moduleType: string }
+  >()
+
   return {
     name: 'vite-plugin-doc-block:scan',
+    resolveId: {
+      filter: { id: scanBlockIdRE },
+      handler: id => ({ id }),
+    },
     load: {
-      filter: { id: /\.vue$/ },
+      filter: { id: scanLoadFilterRE },
       async handler(id) {
+        const blockModule = blockContents.get(id)
+        if (blockModule) {
+          return blockModule
+        }
+        if (!id.endsWith('.vue')) {
+          return
+        }
+
         const code = await fsp.readFile(id, 'utf-8')
+        // Cheap gate before the full SFC parse; false positives just fall
+        // through to the customBlocks check
+        if (!code.includes('<doc')) {
+          return
+        }
         const { descriptor } = parse(code, { filename: id })
 
         if (!descriptor.customBlocks.some(block => block.type === 'doc')) {
           return
         }
 
-        // <script> and <script setup> can coexist. Vue guarantees they
-        // share the same lang, so it can be taken from either one
         const scriptBlocks = [descriptor.script, descriptor.scriptSetup].filter(
           block => block !== null,
         )
-        const lang = scriptBlocks.find(block => block.lang !== undefined)?.lang
-        const moduleType
-          = lang === 'ts' || lang === 'tsx' || lang === 'jsx' ? lang : 'js'
 
-        let js = ''
+        let stub = ''
+        let index = 0
         for (const block of scriptBlocks) {
           if (block.src !== undefined) {
-            js += `import ${JSON.stringify(block.src)}\n`
+            stub += `import ${JSON.stringify(block.src)}\n`
             continue
           }
-          js += `${block.content}\n`
+
+          const { lang } = block
+          const moduleType
+            = lang === 'ts' || lang === 'tsx' || lang === 'jsx' ? lang : 'js'
+          let contents = block.content
+          if (moduleType === 'ts' || moduleType === 'tsx') {
+            contents += extractImportPaths(contents)
+          }
+
+          const blockId = `${id}?doc-block-scan.${index}.${moduleType}`
+          index += 1
+          blockContents.set(blockId, { code: contents, moduleType })
+          // export * does not re-export default, so the stub's own
+          // `export default {}` below never conflicts with a block's one
+          stub += `export * from ${JSON.stringify(blockId)}\n`
         }
 
-        if (moduleType === 'ts' || moduleType === 'tsx') {
-          js += extractImportPaths(js)
-        }
-
-        // A normal <script> already has export default; avoid duplicating it
-        // (same guard as Vite's built-in scan)
-        if (!js.includes('export default')) {
-          js += '\nexport default {}'
-        }
-
-        return { code: js, moduleType }
+        stub += 'export default {}'
+        return { code: stub, moduleType: 'js' }
       },
     },
   }
