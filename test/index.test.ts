@@ -1,5 +1,29 @@
+import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { docBlockPlugin } from '../src'
+
+function fixturePath(name: string) {
+  return path.join(import.meta.dirname, 'fixtures', name)
+}
+
+// Extract the load handler of the scan plugin injected by config()
+function getScanLoadHandler() {
+  const plugin = docBlockPlugin()
+  const config = (plugin.config as unknown as () => {
+    optimizeDeps: {
+      rolldownOptions: {
+        plugins: {
+          load: {
+            handler: (
+              id: string,
+            ) => Promise<{ code: string, moduleType: string } | undefined>
+          }
+        }[]
+      }
+    }
+  })()
+  return config.optimizeDeps.rolldownOptions.plugins[0].load.handler
+}
 
 describe('docBlockPlugin', () => {
   const plugin = docBlockPlugin()
@@ -66,5 +90,34 @@ Use <RouterView> for routing.
 
     // This is the main use case: prevent vue-inspector from parsing HTML in docs
     expect(result?.code).not.toContain('<RouterView>')
+  })
+})
+
+describe('docBlockScanPlugin (dep scan)', () => {
+  const load = getScanLoadHandler()
+
+  it('returns script content for SFC with doc block containing literal <script>', async () => {
+    const result = await load(fixturePath('doc-with-script-literal.vue'))
+
+    // doc block content (including the literal <script>) is excluded
+    expect(result?.code).not.toContain('never executed')
+    // script setup content is preserved
+    expect(result?.code).toContain(`import { ref } from 'vue'`)
+    expect(result?.moduleType).toBe('ts')
+    // guard against TS dropping unused imports: import paths are re-injected as side-effect imports
+    expect(result?.code).toContain(`import './Child.vue'`)
+  })
+
+  it('does not duplicate export default for normal <script>', async () => {
+    const result = await load(fixturePath('doc-with-default-export.vue'))
+
+    const count = result?.code.match(/export default/g)?.length
+    expect(count).toBe(1)
+    expect(result?.moduleType).toBe('js')
+  })
+
+  it('returns undefined for SFC without doc block', async () => {
+    const result = await load(fixturePath('no-doc.vue'))
+    expect(result).toBeUndefined()
   })
 })
