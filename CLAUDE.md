@@ -28,7 +28,10 @@ pnpm dev        # Build in watch mode
 
 ## Release
 
-```bash
-pnpm build
-npm publish
-```
+PR-based. Never push to `main` directly; CI handles the publish.
+
+- Bump the version: `npm version <patch|minor|major> --no-git-tag-version` (updates `package.json` only)
+- Open a PR labeled `release` and merge it into `main`
+- After merge, create a GitHub Release on `main`'s latest commit: `gh release create vX.Y.Z --target main --generate-notes`
+- Publishing the Release triggers `.github/workflows/publish.yml` (`on: release: published`), which runs `npm publish --provenance` (OIDC trusted publishing)
+- Release notes are GitHub's auto-generated PR list; `.github/release.yml` excludes renovate[bot] and `release`-labeled PRs
