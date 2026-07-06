@@ -55,6 +55,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260703.1",
     "eslint": "10.6.0",
     "eslint-plugin-format": "2.0.1",
+    "jiti": "2.7.0",
     "lefthook": "2.1.9",
     "tsdown": "0.22.3",
     "typescript": "6.0.3",
