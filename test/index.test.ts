@@ -9,28 +9,25 @@ function fixturePath(name: string) {
 // Extract the load handler of the scan plugin injected by config()
 function getScanLoadHandler() {
   const plugin = docBlockPlugin()
-  const config = (plugin.config as unknown as () => {
-    optimizeDeps: {
-      rolldownOptions: {
-        plugins: {
-          load: {
-            handler: (
-              id: string,
-            ) => Promise<{ code: string, moduleType: string } | undefined>
-          }
-        }[]
+  const config = (
+    plugin.config as unknown as () => {
+      optimizeDeps: {
+        rolldownOptions: {
+          plugins: {
+            load: {
+              handler: (id: string) => Promise<{ code: string; moduleType: string } | undefined>
+            }
+          }[]
+        }
       }
     }
-  })()
+  )()
   return config.optimizeDeps.rolldownOptions.plugins[0].load.handler
 }
 
 describe('docBlockPlugin', () => {
   const plugin = docBlockPlugin()
-  const transform = plugin.transform as (
-    code: string,
-    id: string,
-  ) => { code: string } | undefined
+  const transform = plugin.transform as (code: string, id: string) => { code: string } | undefined
 
   it('removes <doc> block content', () => {
     const input = `<doc lang="md">

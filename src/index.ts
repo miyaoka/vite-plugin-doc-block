@@ -6,8 +6,8 @@ import { parse } from 'vue/compiler-sfc'
 // The scan bypasses the normal plugin pipeline, so we need to perform
 // the same import extraction as the built-in loader ourselves.
 // https://github.com/vitejs/vite/blob/v8.1.3/packages/vite/src/node/optimizer/scan.ts
-const importsRE
-  = /(?<!\/\/.*)(?<=^|;|\*\/)\s*import(?!\s+type)(?:[\w*{}\n\r\t, ]+from)?\s*("[^"]+"|'[^']+')\s*(?=$|;|\/\/|\/\*)/gm
+const importsRE =
+  /(?<!\/\/.*)(?<=^|;|\*\/)\s*import(?!\s+type)(?:[\w*{}\n\r\t, ]+from)?\s*("[^"]+"|'[^']+')\s*(?=$|;|\/\/|\/\*)/gm
 const multilineCommentsRE = /\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g
 const singlelineCommentsRE = /\/\/.*/g
 
@@ -18,9 +18,7 @@ const singlelineCommentsRE = /\/\/.*/g
  * Equivalent to extractImportPaths in Vite's built-in scan.
  */
 function extractImportPaths(code: string): string {
-  const stripped = code
-    .replace(multilineCommentsRE, '/* */')
-    .replace(singlelineCommentsRE, '')
+  const stripped = code.replace(multilineCommentsRE, '/* */').replace(singlelineCommentsRE, '')
 
   let js = ''
   importsRE.lastIndex = 0
@@ -60,16 +58,13 @@ const scanLoadFilterRE = /(?:\.vue|\?doc-block-scan\.\d+\.\w+)$/
 function docBlockScanPlugin(): Rolldown.Plugin {
   // Per-block contents keyed by virtual module id. Populated when the owning
   // .vue file is loaded, which always happens before the block ids resolve
-  const blockContents = new Map<
-    string,
-    { code: string, moduleType: string }
-  >()
+  const blockContents = new Map<string, { code: string; moduleType: string }>()
 
   return {
     name: 'vite-plugin-doc-block:scan',
     resolveId: {
       filter: { id: scanBlockIdRE },
-      handler: id => ({ id }),
+      handler: (id) => ({ id }),
     },
     load: {
       filter: { id: scanLoadFilterRE },
@@ -90,12 +85,12 @@ function docBlockScanPlugin(): Rolldown.Plugin {
         }
         const { descriptor } = parse(code, { filename: id })
 
-        if (!descriptor.customBlocks.some(block => block.type === 'doc')) {
+        if (!descriptor.customBlocks.some((block) => block.type === 'doc')) {
           return
         }
 
         const scriptBlocks = [descriptor.script, descriptor.scriptSetup].filter(
-          block => block !== null,
+          (block) => block !== null,
         )
 
         let stub = ''
@@ -107,8 +102,7 @@ function docBlockScanPlugin(): Rolldown.Plugin {
           }
 
           const { lang } = block
-          const moduleType
-            = lang === 'ts' || lang === 'tsx' || lang === 'jsx' ? lang : 'js'
+          const moduleType = lang === 'ts' || lang === 'tsx' || lang === 'jsx' ? lang : 'js'
           let contents = block.content
           if (moduleType === 'ts' || moduleType === 'tsx') {
             contents += extractImportPaths(contents)
@@ -168,9 +162,7 @@ export function docBlockPlugin(): Plugin {
 
       const { descriptor } = parse(code, { filename: id })
 
-      const docBlocks = descriptor.customBlocks.filter(
-        block => block.type === 'doc',
-      )
+      const docBlocks = descriptor.customBlocks.filter((block) => block.type === 'doc')
 
       if (docBlocks.length === 0) {
         return
@@ -179,10 +171,7 @@ export function docBlockPlugin(): Plugin {
       let result = code
 
       for (const block of docBlocks) {
-        const blockContent = code.slice(
-          block.loc.start.offset,
-          block.loc.end.offset,
-        )
+        const blockContent = code.slice(block.loc.start.offset, block.loc.end.offset)
         result = result.replace(blockContent, '')
       }
 

@@ -74,8 +74,7 @@ A common approach to ignore custom blocks is to return an empty module:
 const vueDocsPlugin = {
   name: 'vue-docs',
   transform(_code, id) {
-    if (!/vue&type=doc/.test(id))
-      return
+    if (!/vue&type=doc/.test(id)) return
     return `export default ''`
   },
 }
