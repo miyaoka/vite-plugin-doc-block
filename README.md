@@ -18,13 +18,13 @@ pnpm add -D @miyaoka/vite-plugin-doc-block
 
 ```ts
 // vite.config.ts
-import { docBlockPlugin } from '@miyaoka/vite-plugin-doc-block'
-import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vite'
+import { docBlockPlugin } from "@miyaoka/vite-plugin-doc-block";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [docBlockPlugin(), vue()],
-})
+});
 ```
 
 > **Note**: Place `docBlockPlugin()` before other Vue-related plugins.
@@ -49,7 +49,7 @@ Used in the user profile page.
 </doc>
 
 <script setup lang="ts">
-const props = defineProps<{ userId: string }>()
+const props = defineProps<{ userId: string }>();
 </script>
 
 <template>
@@ -72,12 +72,12 @@ A common approach to ignore custom blocks is to return an empty module:
 ```ts
 // This does NOT work with vite-plugin-vue-inspector
 const vueDocsPlugin = {
-  name: 'vue-docs',
+  name: "vue-docs",
   transform(_code, id) {
-    if (!/vue&type=doc/.test(id)) return
-    return `export default ''`
+    if (!/vue&type=doc/.test(id)) return;
+    return `export default ''`;
   },
-}
+};
 ```
 
 However, this doesn't solve the `vite-plugin-vue-inspector` issue. The inspector parses the SFC before this transform runs, and HTML-like strings inside `<doc>` blocks (e.g. `<RouterView>`) cause parsing errors.

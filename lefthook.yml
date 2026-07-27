@@ -1,5 +1,14 @@
 pre-commit:
+  # oxlint --fix と oxfmt は同じファイルを書き換えるため直列実行する
+  piped: true
   commands:
-    fix:
-      run: pnpm fix
+    # priority 未指定だとコマンド名の昇順で実行されるため、整形を後にする順序を明示する
+    lint:
+      priority: 1
+      # 対応外の拡張子はツール側が除外するが、対象が 0 件になると非ゼロ終了するため抑止する
+      run: pnpm exec oxlint --type-aware --fix --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    fmt:
+      priority: 2
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true
