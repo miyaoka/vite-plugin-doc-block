@@ -1,23 +1,29 @@
 {
   "name": "@miyaoka/vite-plugin-doc-block",
-  "type": "module",
   "version": "0.0.3",
   "description": "Vite plugin to strip <doc> custom blocks from Vue SFC",
-  "author": "miyaoka",
+  "keywords": [
+    "doc",
+    "documentation",
+    "sfc",
+    "vite",
+    "vite-plugin",
+    "vue"
+  ],
+  "bugs": "https://github.com/miyaoka/vite-plugin-doc-block/issues",
   "license": "MIT",
+  "author": "miyaoka",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/miyaoka/vite-plugin-doc-block.git"
   },
-  "bugs": "https://github.com/miyaoka/vite-plugin-doc-block/issues",
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "vue",
-    "sfc",
-    "doc",
-    "documentation"
+  "files": [
+    "dist"
   ],
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
   "exports": {
     ".": {
       "import": {
@@ -30,37 +36,35 @@
       }
     }
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.mts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown -w",
-    "lint": "eslint .",
+    "lint": "pnpm lint:oxlint && pnpm lint:oxfmt",
+    "lint:oxlint": "oxlint --type-aware --deny-warnings",
+    "lint:oxfmt": "oxfmt --check",
+    "fix": "pnpm fix:oxlint && pnpm fix:oxfmt",
+    "fix:oxlint": "oxlint --type-aware --fix --no-error-on-unmatched-pattern",
+    "fix:oxfmt": "oxfmt --no-error-on-unmatched-pattern",
     "typecheck": "tsgo",
     "test": "vitest",
     "test:run": "vitest --run",
     "prepublishOnly": "pnpm build"
   },
-  "peerDependencies": {
-    "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0",
-    "vue": "^3.0.0"
-  },
   "devDependencies": {
-    "@antfu/eslint-config": "9.2.0",
     "@types/node": "24.13.3",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "eslint": "10.7.0",
-    "eslint-plugin-format": "2.0.1",
-    "jiti": "2.7.0",
     "lefthook": "2.1.10",
+    "oxfmt": "0.60.0",
+    "oxlint": "1.75.0",
+    "oxlint-tsgolint": "7.0.2001",
     "tsdown": "0.22.14",
     "typescript": "6.0.3",
     "vite": "8.1.5",
     "vitest": "4.1.10",
     "vue": "3.5.40"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0",
+    "vue": "^3.0.0"
   }
 }

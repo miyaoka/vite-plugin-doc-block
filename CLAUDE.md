@@ -10,6 +10,8 @@ Vite plugin that strips `<doc>` custom blocks from Vue SFC.
 pnpm install    # Install dependencies
 pnpm build      # Build
 pnpm dev        # Build in watch mode
+pnpm lint       # oxlint (type-aware) + oxfmt --check
+pnpm fix        # Auto-fix lint violations and format
 ```
 
 ## Structure
