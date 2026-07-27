@@ -3,9 +3,7 @@ pre-commit:
   # 逐次実行。oxlint --fix の書き換えを oxfmt が整形するため、この順序に依存する
   jobs:
     - run: pnpm fix:oxlint {staged_files}
-      glob: "*.{ts,js}"
       stage_fixed: true
 
     - run: pnpm fix:oxfmt {staged_files}
-      glob: "*.{ts,js}"
       stage_fixed: true
