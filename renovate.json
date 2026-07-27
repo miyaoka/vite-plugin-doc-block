@@ -3,12 +3,5 @@
   "extends": ["config:best-practices"],
   "labels": ["dependencies"],
   "assignees": ["miyaoka"],
-  "reviewers": ["miyaoka"],
-  "packageRules": [
-    {
-      "description": "auto-merge tsgo dev preview daily releases",
-      "matchPackageNames": ["@typescript/native-preview"],
-      "automerge": true
-    }
-  ]
+  "reviewers": ["miyaoka"]
 }
