@@ -1,4 +1,4 @@
-# CLAUDE.md
+# vite-plugin-doc-block
 
 ## Overview
 
